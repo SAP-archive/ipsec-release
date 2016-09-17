@@ -1,0 +1,15 @@
+<%
+def print_local_ips_as_alt_names()
+  alt_names = ""
+  spec.networks.each_pair do |name, network|
+    alt_names += "IP" +  " = " + network.ip + "\n" 
+  end
+  alt_names
+end
+%>
+extensions = san
+[san]
+subjectAltName = @alt_names
+
+[alt_names]
+<%= print_local_ips_as_alt_names() %>

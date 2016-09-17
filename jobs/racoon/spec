@@ -1,0 +1,89 @@
+---
+name: racoon
+templates:
+  bin/pre-start: bin/pre-start
+  bin/racoon_ctl.erb: bin/racoon_ctl
+  bin/monit_debugger: bin/monit_debugger
+  etc/setkey.conf.erb: etc/setkey.conf
+  etc/racoon/racoon.conf.erb: etc/racoon/racoon.conf
+  etc/racoon/certs/ca.crt.erb: etc/racoon/certs/ca.crt
+  etc/racoon/certs/ca_pkey.pem.erb: etc/racoon/certs/ca_pkey.pem
+  etc/racoon/certs/openssl-exts.conf.erb: etc/racoon/certs/openssl-exts.conf
+  helpers/ctl_setup.sh: helpers/ctl_setup.sh
+  helpers/ctl_utils.sh: helpers/ctl_utils.sh
+  data/properties.sh.erb: data/properties.sh
+
+packages:
+- racoon
+
+properties:
+  racoon.ports: 
+    description: >
+      Array of IP addresses participating in IPSEC transport mode. See 
+      README.md file for further information
+
+  racoon.disabled:
+    description: Disable ipsec globally
+    default: false
+
+  racoon.phase1_encryption:
+    description: >
+      Specifies the encryption algorithm used for the phase 1 negotiation.
+      Possible values are des, 3des, blowfish, cast128, aes, or camellia
+    default: 'aes'
+
+  racoon.phase1_hash_algorithm:
+    description: >
+      Defines the hash algorithm used for phase 1 negotiation. Possible
+      values are md5, sha1, sha256, sha384, or sha512 
+    default: 'sha256'
+
+  racoon.phase2_encryption:
+    description: > 
+      Defines the encryption algorithm used for phase 2. Possible values are
+      des, 3des, des_iv64, des_iv32, rc5, rc4, idea, 3idea, cast128,
+      blowfish, null_enc, twofish, rijndael, aes, camellia
+    default: 'aes'
+
+  racoon.phase2_authentication_algorithm:
+    description: >
+      Authentication algorithm for phase 2 authentication. Possible values
+      are des, 3des, des_iv64, des_iv32, hmac_md5, hmac_sha1, hmac_sha256,
+      hmac_sha384, hmac_sha512, non_auth
+    default: 'hmac_sha256'
+
+  racoon.dh_group:
+    description: Diffie-Hellman group
+    default: '2'
+
+  racoon.pfs_group:
+    description: Perfect-Forward-Secrecy group (see racoon documentation)
+    default: '2'
+
+  racoon.inner_lifetime:
+    description: lifetime which will be proposed in phase 1 SA proposal
+    default: '1 hour'
+
+  racoon.outer_lifetime:
+    description: lifetime which will be proposed in phase 1 negotiation
+    default: '2 hours'
+
+  racoon.certificate_authority_private_key:
+    description: "private key of ca"
+    default: ''
+
+  racoon.certificate_authority_cert:
+    description: "certificate of ca"
+    default: ''
+
+  racoon.level:
+    description: Means to turn ipsed on and off without causing a downtime (see README.md file)
+    default: 'require'
+
+  racoon.racoon_log_level:
+    description: "Log level for racoon. Possible values are warning, notify, info, debug or debug2"
+    default: 'info'
+
+  racoon.verify_certificate:
+    description: "on or off"
+    default: on

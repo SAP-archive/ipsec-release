@@ -1,0 +1,5 @@
+check process racoon
+  with pidfile /var/vcap/sys/run/racoon/racoon.pid
+  start program "/var/vcap/jobs/racoon/bin/monit_debugger racoon_ctl  '/var/vcap/jobs/racoon/bin/racoon_ctl start'"
+  stop program "/var/vcap/jobs/racoon/bin/monit_debugger racoon_ctl  '/var/vcap/jobs/racoon/bin/racoon_ctl stop'"
+  group vcap

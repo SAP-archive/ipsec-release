@@ -1,0 +1,111 @@
+#!/bin/bash
+
+source /var/vcap/jobs/racoon/helpers/ctl_setup.sh 'racoon'
+
+###
+# Variables for BOSH
+###
+PKG_DIR=/var/vcap/packages/racoon
+JOB_DIR=/var/vcap/jobs/racoon
+PID_DIR=/var/vcap/sys/run/racoon
+LOG_DIR=/var/vcap/sys/log/racoon
+CFG_FILE=${JOB_DIR}/etc/racoon/racoon.conf
+CERTS_DIR=${JOB_DIR}/etc/racoon/certs
+SETKEY_CONF=${JOB_DIR}/etc/setkey.conf
+RACOON=${PKG_DIR}/sbin/racoon
+SETKEY=${PKG_DIR}/sbin/setkey
+PID_FILE="${PID_DIR}/racoon.pid"
+PROC_FILE="/proc/net/pfkey"
+RACOON_ARGS="-l ${LOG_DIR}/racoon.log -f ${CFG_FILE} "
+IPSEC_DISABLED=<%=p("racoon.disabled")%>
+
+# Create all the directories we'll need
+if [ ! -d ${LOG_DIR} ]; then
+    mkdir -p ${LOG_DIR}
+fi
+
+if [ ! -d ${PID_DIR} ]; then
+	mkdir -p ${PID_DIR}
+fi
+
+
+generate_keys_and_certs () {
+
+  pushd ${CERTS_DIR}
+
+  if [ -f "ca_pkey.pem" ]; then
+
+    openssl genpkey -algorithm RSA -out private_key.pem 4096
+    chmod 400 private_key.pem
+
+    # generate certificate signing request
+    # will not work with multiple addresses 
+    # bosh needs to tell us somehow
+    LOCAL_IP=<%= spec.networks.send(spec.networks.methods(false).first).ip %>
+    openssl req -new -key private_key.pem -out cert.csr -subj "/CN=$LOCAL_IP"
+
+    # sign certificate
+    openssl x509 -req -days 3650 -in cert.csr \
+            -CA ca.crt -CAkey ca_pkey.pem \
+            -set_serial 01 -out cert.crt  \
+            -extfile ./openssl-exts.conf
+
+    rm ca_pkey.pem
+  fi
+  popd
+}
+
+
+start () {
+
+  if [ ${IPSEC_DISABLED} != "true" ]; then 
+
+    ${SETKEY} -f ${SETKEY_CONF} || return 11
+
+    ${RACOON} ${RACOON_ARGS} || return 13
+  else
+    # make monit happy (empty SPD and start racoon)
+    ${SETKEY} -F
+    ${SETKEY} -FP
+    ${RACOON} ${RACOON_ARGS} || return 13
+  fi
+}
+
+stop () {
+
+  pkill -F ${PID_FILE} || return 22
+  ${SETKEY} -F || return 23
+  ${SETKEY} -FP || return 23
+}
+
+case "$1" in
+start)
+    generate_keys_and_certs
+	start
+	case "$?" in
+		0) echo "`date` - Started IPSEC successfully" ;;
+		11) echo "`date` - Failed to start setkey"  ;;
+		13) echo "`date` - Failed to start racoon"  ;;
+		1|*) echo "`date` - Failed to start IPSEC"  ;;
+	esac
+  ;;
+       
+stop)	
+	stop
+	case "$?" in
+		0) echo "`date` - Stopped IPSEC successfully" ;;
+		22) echo "`date` - Failed to stop racoon" ;;
+		23) echo "`date` - Failed to stop setkey" ;;
+		1|*) echo "`date` - Failed to stop IPSEC"  ;;
+	esac
+  ;;
+          
+*)
+  "Usage: $0 {start|stop}" >&2
+  exit 1
+  ;;
+
+esac
+
+
+exit 0

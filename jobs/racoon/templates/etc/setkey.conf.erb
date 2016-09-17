@@ -1,0 +1,22 @@
+
+# Flush the SPD and the SAD
+spdflush;
+flush;
+
+# Security policies
+<%
+if p("racoon.disabled") == false
+  p("racoon.ports").each do |port|
+    port["targets"].each do |target|
+      next if target == spec.networks.send(port["name"]).ip
+%>
+spdadd <%= spec.networks.send(port["name"]).ip %> <%= target %> any
+       -P out ipsec
+       esp/transport//<%= p("racoon.level") %>;
+
+spdadd <%= target %> <%= spec.networks.send(port["name"]).ip %> any
+       -P in ipsec
+       esp/transport//<%= p("racoon.level") %>;
+<%     end %>
+<%   end %>
+<% end %>

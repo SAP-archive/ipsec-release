@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/var/vcap/jobs/racoon/bin/racoon_ctl start

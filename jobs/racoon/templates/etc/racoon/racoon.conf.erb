@@ -1,0 +1,44 @@
+
+<%#
+# sanity check
+if p("racoon.use_psk") and p("racoon.use_cert") then
+    raise ArgumentError, 'Cannot use pre-shared key and certificate based authentication at the same time' 
+end
+if not (p("racoon.use_psk") or p("racoon.use_cert")) then
+    raise ArgumentError, 'Must define authentication method' 
+end
+%>
+log <%= p("racoon.racoon_log_level") %>;
+path certificate "/var/vcap/jobs/racoon/etc/racoon/certs";
+path pidfile "/var/vcap/sys/run/racoon/racoon.pid";
+
+###
+#  Default transport settings
+###
+remote anonymous {
+  exchange_mode main;
+  certificate_type x509 "cert.crt" "private_key.pem";
+
+  ca_type x509 "ca.crt";
+  verify_cert <%= p("racoon.verify_certificate") %>;
+  dpd_delay 10;
+  dpd_retry 2;
+  proposal {
+    encryption_algorithm <%= p("racoon.phase1_encryption") %>;
+    hash_algorithm <%= p("racoon.phase1_hash_algorithm") %>;
+    authentication_method rsasig;
+    dh_group <%= p("racoon.dh_group") %>;
+    lifetime time <%= p("racoon.outer_lifetime") %>;
+  }
+}
+
+###
+# Default SA
+###
+sainfo anonymous {
+  encryption_algorithm <%= p("racoon.phase2_encryption") %>;
+  authentication_algorithm <%= p("racoon.phase2_authentication_algorithm") %>;
+  lifetime time <%= p("racoon.inner_lifetime") %>;
+  pfs_group <%= p("racoon.pfs_group") %>;
+  compression_algorithm deflate;
+}
