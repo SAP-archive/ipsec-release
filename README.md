@@ -1,3 +1,5 @@
+[![CLA assistant](https://cla-assistant.io/readme/badge/SAP/ipsec-release)](https://cla-assistant.io/SAP/ipsec-release)
+
 Note: This is a heavily modified fork of the project git repository
 (https://github.com/CloudCredo/bosh-ipsec). It has been modified and extended
 to support an IPsec Cloud Foundry deployment.
