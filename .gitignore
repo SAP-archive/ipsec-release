@@ -13,7 +13,6 @@ Thumbs.db
 *~
 *.swp
 tmp
-.final_builds
 
 
 # Bosh Release Files
@@ -33,4 +32,3 @@ releases/**/*.tgz
 blobs
 *#
 #*
-
