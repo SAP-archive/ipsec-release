@@ -86,4 +86,4 @@ properties:
 
   racoon.verify_certificate:
     description: "on or off"
-    default: on
+    default: 'on'
