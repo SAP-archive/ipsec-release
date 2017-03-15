@@ -34,7 +34,6 @@ CFLAGS=-fno-strict-aliasing ./configure  \
 --enable-natt \
 --enable-dpd \
 --disable-ipv6 \
---enable-stats \
 --enable-hybrid \
 --disable-security-context \
 --with-kernel-headers=/usr/include/ \
