@@ -1,0 +1,20 @@
+---
+packages:
+- name: racoon
+  version: bad1cb8b750c7a7fe19cce17f8cd511d816da427
+  fingerprint: bad1cb8b750c7a7fe19cce17f8cd511d816da427
+  sha1: 90c6c8f3a25b48ea5242652d07f75e6653c3a28c
+  dependencies: []
+jobs:
+- name: racoon
+  version: e62753a57e419e42167671d5b06ed7f6014b9a2c
+  fingerprint: e62753a57e419e42167671d5b06ed7f6014b9a2c
+  sha1: 996aeb4a04326e26a15e2de99ceaf6683d715956
+license:
+  version: 99033c23474bcc73011c8fd93d8c397acbb0990f
+  fingerprint: 99033c23474bcc73011c8fd93d8c397acbb0990f
+  sha1: 2174c7200fd04bc4ca3d5f1caf92065a3127af09
+commit_hash: 4fd663d9
+uncommitted_changes: true
+name: ipsec
+version: '2'
