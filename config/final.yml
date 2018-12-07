@@ -2,5 +2,5 @@
 blobstore:
   provider: s3
   options:
-    bucket_name: ipsec-boshrelease
+    bucket_name: ipsec-release
 final_name: ipsec
