@@ -222,7 +222,6 @@ stemcells:
 
 releases:
 - name: ipsec
-  repository-key: github_com
-  sha1: 44ed47f0fa81c6daad9c79df6ded74ab9ed326ad
-  url: https://github.com:443/SAP/ipsec-release/releases/download/v2/ipsec-2.tgz
-  version: 2
+  url: "https://bosh.io/d/github.com/SAP/ipsec-release?v=3"
+  sha1: "382e16ecbb5f38d378fc36de061c515b66d9a8ca"
+  version: 3
